@@ -54,14 +54,16 @@ function getAnimatedCircleSVG() {
               stroke="deepskyblue"
               stroke-width="8"
               fill="none"
-              stroke-dasharray="251.2"
-              stroke-dashoffset="251.2">
+              stroke-dasharray="157.08"
+              stroke-dashoffset="157.08"
+              transform="rotate(-90 50 50)">
         <animate attributeName="stroke-dashoffset"
-                 from="251.2" to="0" dur="0.3s" fill="freeze" />
+                 from="157.08" to="0" dur="0.3s" fill="freeze" />
       </circle>
     </svg>
   `;
 }
+
 
 function getAnimatedCrossSVG() {
   return `
