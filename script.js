@@ -10,6 +10,7 @@ let fields = [
     null,
 ]
 
+let lastMoveIndex = null;
 
 function render() {
   const game = document.getElementById('game');
@@ -25,10 +26,10 @@ function render() {
 
     if (fields[i] === 'circle') {
       cell.classList.add('circle');
-      cell.innerHTML = '◯';
+      cell.innerHTML = (i === lastMoveIndex) ? getAnimatedCircleSVG() : getStaticCircleSVG();
     } else if (fields[i] === 'cross') {
       cell.classList.add('cross');
-      cell.innerHTML = '✕';
+      cell.innerHTML = (i === lastMoveIndex) ? getAnimatedCrossSVG() : getStaticCrossSVG();
     }
 
     cell.addEventListener('click', () => handleClick(i));
@@ -39,10 +40,82 @@ function render() {
 function handleClick(index) {
   if (!fields[index]) {
     fields[index] = currentPlayer;
-    currentPlayer = currentPlayer === 'cross' ? 'circle' : 'cross'; // X startet zuerst
+    lastMoveIndex = index;
+    currentPlayer = currentPlayer === 'cross' ? 'circle' : 'cross';
     render();
   }
 }
+
+
+function getAnimatedCircleSVG() {
+  return `
+    <svg viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="25"
+              stroke="deepskyblue"
+              stroke-width="8"
+              fill="none"
+              stroke-dasharray="251.2"
+              stroke-dashoffset="251.2">
+        <animate attributeName="stroke-dashoffset"
+                 from="251.2" to="0" dur="0.3s" fill="freeze" />
+      </circle>
+    </svg>
+  `;
+}
+
+function getAnimatedCrossSVG() {
+  return `
+    <svg viewBox="0 0 100 100">
+      <line x1="30" y1="30" x2="70" y2="70"
+            stroke="gold"
+            stroke-width="8"
+            stroke-linecap="round"
+            stroke-dasharray="56.6"
+            stroke-dashoffset="56.6">
+        <animate attributeName="stroke-dashoffset"
+                 from="56.6" to="0" dur="0.2s" fill="freeze" />
+      </line>
+      <line x1="70" y1="30" x2="30" y2="70"
+            stroke="gold"
+            stroke-width="8"
+            stroke-linecap="round"
+            stroke-dasharray="56.6"
+            stroke-dashoffset="56.6">
+        <animate attributeName="stroke-dashoffset"
+                 from="56.6" to="0" dur="0.2s" fill="freeze" begin="0.2s" />
+      </line>
+    </svg>
+  `;
+}
+
+
+function getStaticCircleSVG() {
+  return `
+    <svg viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="25"
+              stroke="deepskyblue"
+              stroke-width="8"
+              fill="none" />
+    </svg>
+  `;
+}
+
+function getStaticCrossSVG() {
+  return `
+    <svg viewBox="0 0 100 100">
+      <line x1="30" y1="30" x2="70" y2="70"
+            stroke="gold"
+            stroke-width="8"
+            stroke-linecap="round" />
+      <line x1="70" y1="30" x2="30" y2="70"
+            stroke="gold"
+            stroke-width="8"
+            stroke-linecap="round" />
+    </svg>
+  `;
+}
+
+
 
 
 let currentPlayer = 'cross'; // X beginnt das Spiel
