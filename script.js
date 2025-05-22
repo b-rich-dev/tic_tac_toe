@@ -31,6 +31,30 @@ function init() {
 }
 
 
+function restartGame() {
+    fields = Array(9).fill(null);
+    currentPlayer = 'cross';
+
+    // Entferne ggf. vorhandene Gewinnlinie
+    const winLine = document.querySelector('.win-line');
+    if (winLine && winLine.parentElement) {
+        winLine.parentElement.remove();
+    }
+
+    render();
+}
+
+
+function handleClick(index) {
+    if (!fields[index]) {
+        fields[index] = currentPlayer;
+        lastMoveIndex = index;
+        currentPlayer = currentPlayer === 'cross' ? 'circle' : 'cross';
+        render();
+    }
+}
+
+
 function render() {
     const game = document.getElementById('game');
     game.innerHTML = ''; // Reset
@@ -51,10 +75,15 @@ function render() {
             cell.innerHTML = (i === lastMoveIndex) ? getAnimatedCrossSVG() : getStaticCrossSVG();
         }
 
-        cell.addEventListener('click', () => handleClick(i));
+        // Nur klickbar, wenn das Spiel noch läuft
+        if (!fields[i] && !getWinnerLine()) {
+            cell.addEventListener('click', () => handleClick(i));
+        }
+
         game.appendChild(cell);
     }
 
+    // Gewinnerlinie rendern
     const winnerLine = getWinnerLine();
     if (winnerLine) {
         const lineSVG = getWinLineSVG(winnerLine);
@@ -68,16 +97,25 @@ function render() {
         overlay.style.height = '300px';
         game.appendChild(overlay);
     }
+
+    // Anzeige aktualisieren
+    const status = document.getElementById('status');
+    if (winnerLine) {
+        const winner = fields[winnerLine[0]];
+        const symbol = winner === 'cross' ? 'X' : 'O';
+        const color = winner === 'cross' ? 'gold' : 'deepskyblue';
+        status.innerHTML = `<span style="color: ${color}; font-weight: bold;">${symbol}</span> hat gewonnen!`;
+    } else if (!fields.includes(null)) {
+        status.textContent = 'Unentschieden!';
+    } else {
+        const symbol = currentPlayer === 'cross' ? 'X' : 'O';
+        const color = currentPlayer === 'cross' ? 'gold' : 'deepskyblue';
+        status.innerHTML = `<span style="color: ${color}; font-weight: bold;">${symbol}</span> ist am Zug.`;
+    }
+
 }
 
-function handleClick(index) {
-    if (!fields[index]) {
-        fields[index] = currentPlayer;
-        lastMoveIndex = index;
-        currentPlayer = currentPlayer === 'cross' ? 'circle' : 'cross';
-        render();
-    }
-}
+
 
 
 function getWinnerLine() {
